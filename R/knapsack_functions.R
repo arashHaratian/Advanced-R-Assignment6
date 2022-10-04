@@ -35,3 +35,55 @@ return(list(
 ))
 }
 
+#' Greedy Knapsack
+#'
+#' @param x The data containing `w`, `v` representing the objects
+#' @param W The weight limit of the knapsack
+#'
+#' @return a `list` containing the `elements` and the best `value`
+#' @export
+#'
+#' @examples
+#' greedy_knapsack(x = knapsack_objects[1:800,], W = 3500)
+#' 
+greedy_knapsack <- function(x,W){
+  n <- length(rownames(x))
+  
+  df <- data.frame(x)
+  x$percentage <- x[[2]]/x[[1]]
+  sorting <- sort(x$percentage,index.return=TRUE, decreasing = TRUE)$ix
+  wsum <- 0
+  vsum <- 0
+  firstnot <- 0
+  elements_ix <- c()
+  for(i in sorting){
+    if((wsum + x[i,1])<=W){
+      wsum <- wsum + x[i,1]
+      vsum <- vsum + x[i,2] 
+      elements_ix <- append(elements_ix,i)
+    }else if((firstnot == 0) && (x[i,2] < W)){
+      firstnot <- i
+      break # For better approximation remove this line
+    }
+  }
+  if(firstnot != 0){
+    wsum2 <- x[firstnot,1]
+    vsum2 <- x[firstnot,2]
+    elements_ix2 <- c(firstnot)
+    for (i in sorting){
+      if((firstnot != i) && ((wsum2 + x[i,1])<=W)){
+        wsum2 <- wsum2 + x[i,1]
+        vsum2 <- vsum2 + x[i,2] 
+        elements_ix2 <- append(elements_ix2,i)
+      }else if(firstnot != i){ # For better approximation remove this else if block
+        break
+      }
+    }
+    ifelse(vsum >= vsum2,
+           return(list(value=vsum,elements=elements_ix)),
+           return(list(value=vsum2,elements=elements_ix2)))
+  } else{
+    return(list(value=vsum,elements=elements_ix))
+  }
+}
+
