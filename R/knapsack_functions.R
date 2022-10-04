@@ -11,9 +11,13 @@
 #' brute_force_knapsack(x = knapsack_objects[1:8,], W = 3500)
 #'
 brute_force_knapsack <- function(x, W) {
-  # stopifnot({
-  #
-  # })
+  stopifnot({
+    is.data.frame(x)
+    is.numeric(x[[1]])
+    is.numeric(x[[2]])
+    names(x) %in% c("v", "w")
+    W > 0
+  })
 
   final <- vector("numeric")
   max <- 0
@@ -70,6 +74,14 @@ max_val <- function(i, W, value_table, x) {
 #' dynamic_knapsack(knapsack_objects[1:12, ], 3500)
 #'
 dynamic_knapsack <- function(x, W) {
+  stopifnot({
+    is.data.frame(x)
+    is.numeric(x[[1]])
+    is.numeric(x[[2]])
+    names(x) %in% c("v", "w")
+    W > 0
+  })
+
   i <- nrow(x)
   value_table <- matrix(-1, nrow = i, ncol = W)
   if (i == 1) {
@@ -98,6 +110,14 @@ dynamic_knapsack <- function(x, W) {
 #' greedy_knapsack(x = knapsack_objects[1:800,], W = 3500)
 #'
 greedy_knapsack <- function(x, W) {
+  stopifnot({
+    is.data.frame(x)
+    is.numeric(x[[1]])
+    is.numeric(x[[2]])
+    names(x) %in% c("v", "w")
+    W > 0
+  })
+
   n <- length(rownames(x))
 
   df <- data.frame(x)
