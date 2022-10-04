@@ -4,6 +4,7 @@
 #'
 #' @return `data.frame` containing the `w` and `v`
 #' @export
+#' @importFrom stats runif
 #'
 #' @examples
 #'

@@ -1,6 +1,6 @@
 Package: lab6package
 Title: Solving the Knapsack problem(lab 6 from adavanced R programmming)
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person("Arash", "Haratian", , "araha147@student.liu.com", role = c("aut", "cre"))
     person("Daniel", "Díaz-Roncero González", , "dandi692@student.liu.com", role = c("aut", "cre"))
