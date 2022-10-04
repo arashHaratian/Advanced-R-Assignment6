@@ -63,7 +63,6 @@ greedy_knapsack <- function(x,W){
       elements_ix <- append(elements_ix,i)
     }else if((firstnot == 0) && (x[i,2] < W)){
       firstnot <- i
-      break # For better approximation remove this line
     }
   }
   if(firstnot != 0){
@@ -75,8 +74,6 @@ greedy_knapsack <- function(x,W){
         wsum2 <- wsum2 + x[i,1]
         vsum2 <- vsum2 + x[i,2] 
         elements_ix2 <- append(elements_ix2,i)
-      }else if(firstnot != i){ # For better approximation remove this else if block
-        break
       }
     }
     ifelse(vsum >= vsum2,
