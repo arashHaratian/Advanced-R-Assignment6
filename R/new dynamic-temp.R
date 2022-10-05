@@ -54,8 +54,8 @@ dynamic2 <- function(x, W) {
   ))
 
 }
-tik <- Sys.time()
-dynamic2(knapsack_objects[1:12, ], 3500)
-tok <- Sys.time()
-tok-tik
+#tik <- Sys.time()
+#dynamic2(knapsack_objects[1:12, ], 3500)
+#tok <- Sys.time()
+#tok-tik
 

@@ -1,0 +1,59 @@
+---
+title: "Lab Report Knapsack"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Lab Report Knapsack}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(lab6package)
+```
+
+This package, designed for the "Advanced R Programming" LiU course, contains different functions and approaches for solving the knapsack problem.  
+
+## Brute Force Search
+
+The brute force search algorithm iterates through all the possible combinations of items, and takes the one with the maximum value that verifies that the sum of the weights doesn't exceed the limit.  
+
+This algorithm is of order O(2^n).   
+The created function for this algorithm is called `brute_force_knapsack()` and its arguments are:   
+- x: A `data.frame` containing `w`, `v` representing the weights and values for each item.  
+- W: A `numeric` value representing the weight limit of the knapsack.  
+This function returns a `list` containing the final value of the solution and the elements that are in the knapsack. An example of how to use this function can be observed in the following code:  
+
+```{r brute_force, echo = TRUE}
+time_bfk1 <- Sys.time()
+bfk <- brute_force_knapsack(x = knapsack_objects[1:16,], W = 3500)
+time_bfk <- Sys.time() - time_bfk1
+print(bfk)
+```
+
+The time that this function takes to run for n = 16 (and W=3500) is approximately `r round(time_bfk,2)` seconds.
+
+## Dynamic Programming
+
+The dynamic programming uses recursives functions to find the best possible solution without the need to go through all the possible combination.
+
+This algorithm is of order O(nW).   
+The created function for this algorithm is called `knapsack_dynamic()` and its arguments are:   
+- x: A `data.frame` containing `w`, `v` representing the weights and values for each item.  
+- W: A `numeric` value representing the weight limit of the knapsack.  
+This function returns a `list` containing the final value of the solution and the elements that are in the knapsack. An example of how to use this function can be observed in the following code:  
+
+```{r dynamic, echo = TRUE}
+time_dyn1 <- Sys.time()
+dyn <- knapsack_dynamic(x = knapsack_objects[1:500,], W = 4200)
+time_dyn <- Sys.time() - time_dyn1
+print(dyn)
+```
+
+The time that this function takes to run for n = 500 (and W=4200) is approximately `r round(time_dyn,2)` seconds.
