@@ -82,18 +82,19 @@ We have developed an improved version: `greedy_knapsack2()` that goes over all t
 
 See the comparison of values and times of the original and improved version in the following code:  
 
-```{r greedy2, echo = False}
-print ("Results for the original algorithm - greedy_knapsack()")
+```{r greedy2, echo = FALSE}
+cat("Results for the original algorithm - greedy_knapsack()")
 time_gk1 <- Sys.time()
 gk <- greedy_knapsack(x = knapsack_objects[1:1000000,], W = 3500)
 time_gk <- Sys.time() - time_gk1
 print(gk)
-print("Time is = ", time_gk)
+cat(paste("Time is = ", time_gk))
 
-print ("Results for the improved algorithm - greedy_knapsack2()")
+cat("\n\n\nResults for the improved algorithm - greedy_knapsack2()")
 time_gk1 <- Sys.time()
 gk <- greedy_knapsack2(x = knapsack_objects[1:1000000,], W = 3500)
 time_gk <- Sys.time() - time_gk1
 print(gk)
-print("Time is = ", time_gk)
+cat(paste("Time is = ", time_gk))
 ```
+As it can be seen, it improves the result without spending much additional time.  
