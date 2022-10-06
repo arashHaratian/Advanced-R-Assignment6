@@ -1,0 +1,133 @@
+---
+title: "Lab Report Knapsack"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Lab Report Knapsack}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(lab6package)
+```
+
+This package, designed for the "Advanced R Programming" LiU course, contains different functions and approaches for solving the knapsack problem.  
+
+## Brute Force Search
+
+The brute force search algorithm iterates through all the possible combinations of items, and takes the one with the maximum value that verifies that the sum of the weights doesn't exceed the limit.  
+
+This algorithm is of order O(2^n).   
+The created function for this algorithm is called `brute_force_knapsack()` and its arguments are:   
+- x: A `data.frame` containing `w`, `v` representing the weights and values for each item.  
+- W: A `numeric` value representing the weight limit of the knapsack.  
+This function returns a `list` containing the final value of the solution and the elements that are in the knapsack. An example of how to use this function can be observed in the following code:  
+
+```{r brute_force, echo = TRUE}
+time_bfk1 <- Sys.time()
+bfk <- brute_force_knapsack(x = knapsack_objects[1:16,], W = 3500)
+time_bfk <- Sys.time() - time_bfk1
+print(bfk)
+```
+
+The time that this function takes to run for n = 16 (and W=3500) is approximately `r round(time_bfk,2)` seconds.
+
+## Dynamic Programming
+
+The dynamic programming uses recursive functions to find the best possible solution without the need to go through all the possible combination.
+
+This algorithm is of order O(nW).   
+The created function for this algorithm is called `knapsack_dynamic()` and its arguments are:   
+- x: A `data.frame` containing `w`, `v` representing the weights and values for each item.  
+- W: A `numeric` value representing the weight limit of the knapsack.  
+This function returns a `list` containing the final value of the solution and the elements that are in the knapsack. An example of how to use this function can be observed in the following code:  
+
+```{r dynamic, echo = TRUE}
+time_dyn1 <- Sys.time()
+dyn <- knapsack_dynamic(x = knapsack_objects[1:500,], W = 2000)
+time_dyn <- Sys.time() - time_dyn1
+print(dyn)
+```
+
+The time that this function takes to run for n = 500 (and W = 2000) is approximately `r round(time_dyn,2)` seconds.
+
+## Greedy heuristic
+
+The greedy heuristic algorithm finds an approximation to the best solution by selecting the elements which have the biggest value/weight ratio. The solution given by this algorithm is always at least half the best possible value.  
+
+This algorithm is of order O(nlogn), as sorting the percentage of value divided by weight has O(nlog(n)) complexity.  
+The created function for this algorithm is called `greedy_knapsack()` and its arguments are:   
+- x: A `data.frame` containing `w`, `v` representing the weights and values for each item.  
+- W: A `numeric` value representing the weight limit of the knapsack.  
+This function returns a `list` containing the final value of the solution and the elements that are in the knapsack. An example of how to use this function can be observed in the following code:  
+
+```{r greedy, echo = TRUE}
+time_gk1 <- Sys.time()
+gk <- greedy_knapsack(x = knapsack_objects[1:1000000,], W = 3500)
+time_gk <- Sys.time() - time_gk1
+print(gk)
+```
+
+The time that this function takes to run for n = 1000000 (and W=3500) is approximately `r round(time_gk,2)` seconds.
+The version developed for this algorithm is not ideal, as we are not introducing any more elements in the knapsack when we find the first element of the sorted list which can't enter. 
+
+We have developed an improved version: `greedy_knapsack2()` that goes over all the list of elements two times (the second time introducing to the second list the first element that couldn't get in the first list) and introducing all those elements that can enter. The order of the algorithm is still O(nlogn), as it sorts the list (O(nlog(n))), runs through the fist loop (O(n)) and run through the second loop (O(n)).  
+
+See the comparison of values and times of the original and improved version in the following code:  
+
+```{r greedy2, echo = FALSE}
+cat("Results for the original algorithm - greedy_knapsack()")
+time_gk1 <- Sys.time()
+gk <- greedy_knapsack(x = knapsack_objects[1:1000000,], W = 3500)
+time_gk <- Sys.time() - time_gk1
+print(gk)
+cat(paste("Time is = ", time_gk))
+
+cat("\n\n\nResults for the improved algorithm - greedy_knapsack2()")
+time_gk1 <- Sys.time()
+gk <- greedy_knapsack2(x = knapsack_objects[1:1000000,], W = 3500)
+time_gk <- Sys.time() - time_gk1
+print(gk)
+cat(paste("Time is = ", time_gk))
+```
+As it can be seen, it improves the result without spending much additional time.  
+
+
+## Parallelize brute force search
+
+We used `furrr` package to write the parallelize brute force version. The time spend to run the parallelize brute force for `n =16` with `W = 3500` is the following:
+
+```{r}
+time_bfp1 <- Sys.time()
+bfp <- brute_force_knapsack(x = knapsack_objects[1:16,], W = 3500, parallel =TRUE)
+time_bfp <- Sys.time() - time_bfp1
+cat(paste("Time is = ", time_bfp))
+```
+
+The performance gained from parallelizing the brute force is `r round(as.numeric(time_bfk)/as.numeric(time_bfp), 4) *100`% faster than the default version.
+
+
+## Profile your code and optimize your code
+
+Here, we are profiling the first dynamic knapsack algorithm using the `profvis()`:
+
+```{r}
+profvis::profvis(knapsack_dynamic_old(x = knapsack_objects[1:500,], W = 2000))
+```
+
+```{r, echo=FALSE}
+time_dko <- Sys.time()
+dko <- knapsack_dynamic_old(x = knapsack_objects[1:500,], W = 2000)
+time_dko <- Sys.time() - time_dko
+```
+
+
+As we can see, one of the main problems of the high running time of the function, is caused by using `[]` or `[.data.frame()` in a for loop.
+So we decided to use two vectors for weight(`w`) and value(`v`). The performance gained from profiling the dynamic function is `r round(as.numeric(time_dko)/as.numeric(time_dyn), 4) *100`%  faster than the default version.
