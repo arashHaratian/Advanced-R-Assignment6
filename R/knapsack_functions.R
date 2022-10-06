@@ -78,6 +78,7 @@ knapsack_dynamic <- function(x, W) {
       elements_knapsack[ln] <<- i
       return()
     }  else{
+      dynamic_knapsack(i - 1, j)
       return()
     }
   }
@@ -95,8 +96,9 @@ knapsack_dynamic <- function(x, W) {
     }
   }
   
-  elements_knapsack <- vector(length=n)
+  elements_knapsack <- rep(0,n)
   ln <- 0
+  dynamic_knapsack(n,W)
   return(list(value = m[n,W],elements = elements_knapsack[1:ln]))
 }
 
@@ -172,63 +174,19 @@ greedy_knapsack <- function(x, W) {
          )))
 }
 
+#' Greedy Knapsack Improved
+#'
+#' @param x A `data.frame` containing `w`, `v` representing the weights and values for each item
+#' @param W The weight limit of the knapsack
+#'
+#' @return a `list` containing the `elements` and the best `value`
+#' @export
+#'
+#' @examples
+#' data(knapsack_objects)
+#' greedy_knapsack2(x = knapsack_objects[1:800,], W = 3700)
+#' 
 greedy_knapsack2 <- function(x, W) {
-  stopifnot({
-    is.data.frame(x)
-    is.numeric(x[[1]])
-    is.numeric(x[[2]])
-    names(x) %in% c("v", "w")
-    W > 0
-  })
-  
-  n <- length(rownames(x))
-  
-  df <- data.frame(x)
-  x$percentage <- x[[2]] / x[[1]]
-  sorting <-
-    sort(x$percentage,
-         index.return = TRUE,
-         decreasing = TRUE)$ix
-  wsum <- 0
-  vsum <- 0
-  firstnot <- 0
-  elements_ix <- c()
-  for (i in sorting) {
-    if ((wsum + x[i, 1]) <= W) {
-      wsum <- wsum + x[i, 1]
-      vsum <- vsum + x[i, 2]
-      elements_ix <- append(elements_ix, i)
-    } else if ((firstnot == 0) && (x[i, 1] <= W)) {
-      firstnot <- i
-      break
-    }
-  }
-  if (firstnot != 0) {
-    wsum2 <- x[firstnot, 1]
-    vsum2 <- x[firstnot, 2]
-    elements_ix2 <- c(firstnot)
-    for (i in sorting){
-      if((firstnot != i) && ((wsum2 + x[i,1])<=W)){
-        wsum2 <- wsum2 + x[i,1]
-        vsum2 <- vsum2 + x[i,2] 
-        elements_ix2 <- append(elements_ix2,i)
-      }else if(firstnot != i){
-        break
-      }
-    }
-    ifelse(vsum >= vsum2,
-           return(list(
-             value = vsum, elements = elements_ix
-           )),
-           return(list(
-             value = vsum2, elements = elements_ix2
-           )))
-  } else{
-    return(list(value = vsum, elements = elements_ix))
-  }
-}
-
-greedy_knapsack3 <- function(x, W) {
   stopifnot({
     is.data.frame(x)
     is.numeric(x[[1]])

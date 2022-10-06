@@ -7,7 +7,7 @@
 knapsack_dynamic(x, W)
 }
 \arguments{
-\item{x}{The data containing \code{w}, \code{v} representing the objects}
+\item{x}{A \code{data.frame} containing \code{w}, \code{v} representing the weights and values for each item}
 
 \item{W}{The weight limit of the knapsack}
 }
