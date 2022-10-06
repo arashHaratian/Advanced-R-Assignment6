@@ -55,61 +55,49 @@ brute_force_knapsack <- function(x, W) {
 #'
 knapsack_dynamic <- function(x, W) {
   stopifnot({
-    is.data.frame(x)
-    is.numeric(x[[1]])
-    is.numeric(x[[2]])
-    names(x) %in% c("v", "w")
-    is.vector(x=W,mode="numeric")
-    length(W)==1
-    W > 0
+  is.data.frame(x)
+  is.numeric(x[["w"]])
+  is.numeric(x[["v"]])
+  names(x) %in% c("v", "w")
+  is.vector(x=W,mode="numeric")
+  length(W)==1
+  W > 0
   })
-  
-  max_val <- function(i, j) {
-    if (i == 1 | j <= 1) {
-      value_table[i, j] <- 0
-      return(value_table[i, j])
-    }
-    if (value_table [i - 1, j] == -1) {
-      value_table[i - 1, j] <- max_val(i - 1, j)
-    }
-    
-    if (x[i, "w"] >= j) {
-      value_table[i, j] <- value_table[i - 1, j]
-    } else{
-      if (value_table[i - 1, j - x[i, "w"]] == -1) {
-        value_table[i - 1, j - x[i, "w"]] <-
-          max_val(i - 1, j - x[i, "w"])
-      }
-      value_table[i, j] <-
-        max(value_table[i - 1, j], value_table[i - 1, j - x[i, "w"]] + x[i, "v"])
-    }
-  }
-  
+
   dynamic_knapsack <- function(i, j) {
     
     if (i == 1) {
-      return(c())
+      return()
     }
     # test <- memoise(max_val)
     # test <- memoise(dynamic_knapsack)
     
-    if (max_val(i, j) > max_val(i - 1, j)) {
-      return(c(i, dynamic_knapsack(i - 1, j - x[i, "w"])))
+    if (m[i, j] > m[i - 1, j]) {
+      dynamic_knapsack(i - 1, j - x[i, "w"])
+      ln <<- ln + 1
+      elements_knapsack[ln] <<- i
+      return()
     }  else{
-      return(dynamic_knapsack(i - 1, j))
+      return()
+    }
+  }
+  n <- length(rownames(x))
+  
+  m <- matrix(0, nrow = n, ncol = W)
+  
+  for(i in 2:n){
+    for(j in 1:W){
+      if((x[i,"w"] >= j)){
+        m[i,j] <- m[i-1,j]
+      } else{
+        m[i,j] <- max(m[i-1,j],m[i-1,j-x[i,"w"]]+x[i,"v"])
+      }
     }
   }
   
-  n <- nrow(x)
-  value_table <- matrix(-1, nrow = n, ncol = W)
-  val <- max_val(n, W)
-  elements <- dynamic_knapsack(n, W)
-  
-  return(list(
-    "value" = val,
-    "elements" = elements
-  ))
-  
+  elements_knapsack <- vector(length=n)
+  ln <- 0
+  return(list(value = m[n,W],elements = elements_knapsack[1:ln]))
 }
 
 #' Greedy Knapsack

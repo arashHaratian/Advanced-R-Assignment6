@@ -51,9 +51,9 @@ This function returns a `list` containing the final value of the solution and th
 
 ```{r dynamic, echo = TRUE}
 time_dyn1 <- Sys.time()
-dyn <- knapsack_dynamic(x = knapsack_objects[1:500,], W = 4200)
+dyn <- knapsack_dynamic(x = knapsack_objects[1:500,], W = 500)
 time_dyn <- Sys.time() - time_dyn1
 print(dyn)
 ```
 
-The time that this function takes to run for n = 500 (and W=4200) is approximately `r round(time_dyn,2)` seconds.
+The time that this function takes to run for n = 500 (and W=500) is approximately `r round(time_dyn,2)` seconds.
