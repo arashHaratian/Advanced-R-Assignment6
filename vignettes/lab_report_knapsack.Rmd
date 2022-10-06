@@ -51,12 +51,12 @@ This function returns a `list` containing the final value of the solution and th
 
 ```{r dynamic, echo = TRUE}
 time_dyn1 <- Sys.time()
-dyn <- knapsack_dynamic(x = knapsack_objects[1:500,], W = 500)
+dyn <- knapsack_dynamic(x = knapsack_objects[1:500,], W = 2000)
 time_dyn <- Sys.time() - time_dyn1
 print(dyn)
 ```
 
-The time that this function takes to run for n = 500 (and W=500) is approximately `r round(time_dyn,2)` seconds.
+The time that this function takes to run for n = 500 (and W = 2000) is approximately `r round(time_dyn,2)` seconds.
 
 ## Greedy heuristic
 
@@ -98,3 +98,36 @@ print(gk)
 cat(paste("Time is = ", time_gk))
 ```
 As it can be seen, it improves the result without spending much additional time.  
+
+
+## Parallelize brute force search
+
+We used `furrr` package to write the parallelize brute force version. The time spend to run the parallelize brute force for `n =16` with `W = 3500` is the following:
+
+```{r}
+time_bfp1 <- Sys.time()
+bfp <- brute_force_knapsack(x = knapsack_objects[1:16,], W = 3500, parallel =TRUE)
+time_bfp <- Sys.time() - time_bfp1
+cat(paste("Time is = ", time_bfp))
+```
+
+The performance gained from parallelizing the brute force is `r round(as.numeric(time_bfk)/as.numeric(time_bfp), 4) *100`% faster than the default version.
+
+
+## Profile your code and optimize your code
+
+Here, we are profiling the first dynamic knapsack algorithm using the `profvis()`:
+
+```{r}
+profvis::profvis(knapsack_dynamic_old(x = knapsack_objects[1:500,], W = 2000))
+```
+
+```{r, echo=FALSE}
+time_dko <- Sys.time()
+dko <- knapsack_dynamic_old(x = knapsack_objects[1:500,], W = 2000)
+time_dko <- Sys.time() - time_dko
+```
+
+
+As we can see, one of the main problems of the high running time of the function, is caused by using `[]` or `[.data.frame()` in a for loop.
+So we decided to use two vectors for weight(`w`) and value(`v`). The performance gained from profiling the dynamic function is `r round(as.numeric(time_dko)/as.numeric(time_dyn), 4) *100`%  faster than the default version.

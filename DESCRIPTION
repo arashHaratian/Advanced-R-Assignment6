@@ -20,4 +20,5 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr
 Imports: 
     furrr,
-    future
+    future,
+    profvis

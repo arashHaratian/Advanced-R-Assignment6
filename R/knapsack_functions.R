@@ -78,6 +78,72 @@ brute_force_knapsack <- function(x, W, parallel = FALSE) {
 #'
 knapsack_dynamic <- function(x, W) {
   stopifnot({
+    is.data.frame(x)
+    is.numeric(x[["w"]])
+    is.numeric(x[["v"]])
+    names(x) %in% c("v", "w")
+    is.vector(x=W,mode="numeric")
+    length(W)==1
+    W > 0
+  })
+
+  w <- x$w
+  v <- x$v
+
+  dynamic_knapsack <- function(i, j) {
+
+    if (i == 1) {
+      return()
+    }
+    # test <- memoise(max_val)
+    # test <- memoise(dynamic_knapsack)
+
+    if (m[i, j] > m[i - 1, j]) {
+      dynamic_knapsack(i - 1, j - w[i])
+      ln <<- ln + 1
+      elements_knapsack[ln] <<- i
+      return()
+    }  else{
+      dynamic_knapsack(i - 1, j)
+      return()
+    }
+  }
+  n <- length(rownames(x))
+
+  m <- matrix(0, nrow = n, ncol = W)
+
+  for(i in 2:n){
+    for(j in 1:W){
+      if((w[i] >= j)){
+        m[i,j] <- m[i-1,j]
+      } else{
+        m[i,j] <- max(m[i-1,j],m[i-1,j-w[i]]+v[i])
+      }
+    }
+  }
+
+  elements_knapsack <- rep(0,n)
+  ln <- 0
+  dynamic_knapsack(n,W)
+  return(list(value = m[n,W],elements = elements_knapsack[1:ln]))
+}
+
+
+
+#' Old version of dynamic knapsack
+#'
+#' @param x A `data.frame` containing `w`, `v` representing the weights and values for each item
+#' @param W The weight limit of the knapsack
+#'
+#' @return A list containing the `elements` and the best `value`
+#' @export
+#'
+#' @examples
+#' data(knapsack_objects)
+#' knapsack_dynamic_old(knapsack_objects[1:12, ], 3500)
+#'
+knapsack_dynamic_old <- function(x, W) {
+  stopifnot({
   is.data.frame(x)
   is.numeric(x[["w"]])
   is.numeric(x[["v"]])
