@@ -4,12 +4,14 @@
 \alias{brute_force_knapsack}
 \title{Brute force function for solving knapsack problem}
 \usage{
-brute_force_knapsack(x, W)
+brute_force_knapsack(x, W, parallel = FALSE)
 }
 \arguments{
 \item{x}{A \code{data.frame} containing \code{w}, \code{v} representing the weights and values for each item}
 
 \item{W}{The weight limit of the knapsack}
+
+\item{parallel}{Default to \code{FALSE}. For running the Parallelize brute force search.}
 }
 \value{
 A list containing the \code{elements} and the best \code{value}
